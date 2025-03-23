@@ -1,0 +1,32 @@
+services:
+  zabbix-web-nginx-pgsql:
+    container_name: "zabbix-web"
+    image: zabbix/zabbix-web-nginx-pgsql:7.0-ubuntu-latest
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./cert/:/usr/share/zabbix/conf/certs/:ro
+    environment:
+     # ZBX_SERVER_HOST: ""  # SE FOR USAR HA NAO PRECISA DESSA INFORMACAO
+      ZBX_SERVER_NAME: "Zabbix Chico" # NOME QUE DESEJA QUE APARECA NO SEU ZABBIX
+      DB_SERVER_HOST: "192.168.0.240" #COLOQUE O IP DO SEU BANCO DE DADOS
+      POSTGRES_USER: "zabbix"  # USUARIO DO BANCO DE DADOS
+      POSTGRES_PASSWORD: "P@ssword" # SENHA DO BANCO DE DADOS
+      POSTGRES_DB: "zabbix_db" # NOME DO BANCO DE DADOS
+      ZBX_MEMORYLIMIT: "1024M"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    network_mode: host
+    stop_grace_period: 10s
+    labels:
+      com.zabbix.description: "Zabbix frontend on Nginx web-server with PostgreS                                                                                                                                                             QL database support"
+      com.zabbix.company: "Zabbix LLC"
+      com.zabbix.component: "zabbix-frontend"
+      com.zabbix.webserver: "nginx"
+      com.zabbix.dbtype: "pgsql"
+      com.zabbix.os: "alpine"

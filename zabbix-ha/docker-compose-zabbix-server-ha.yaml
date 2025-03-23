@@ -1,0 +1,39 @@
+services:
+  zabbix-server:
+    container_name: "zabbix-server"
+    image: zabbix/zabbix-server-pgsql:7.0-ubuntu-latest
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      ZBX_STARTLLDPROCESSORS: 50
+      ZBX_STARTESCALATORS: 10
+      ZBX_STARTTIMERS: 3
+      ZBX_STARTDBSYNCERS: 10
+      ZBX_CACHESIZE: 64M
+      ZBX_HISTORYCACHESIZE: 64M
+      ZBX_HISTORYINDEXCACHESIZE: 64M
+      ZBX_STARTHISTORYPOLLERS: 150
+      ZBX_TRENDCACHESIZE: 64M
+      ZBX_VALUECACHESIZE: 64M
+      ZBX_HOUSEKEEPINGFREQUENCY: 1
+      ZBX_MAXHOUSEKEEPERDELETE: 10000
+      ZBX_PROBLEMHOUSEKEEPINGFREQUENCY: 60
+      DB_SERVER_HOST: "192.168.0.240" # DEVE COLOCAR O IP DO SEU BANCO DE DADOS
+      POSTGRES_USER: "zabbix" # USUARIO DO BANCO DE DADOS
+      POSTGRES_PASSWORD: "P@ssword" # SENHA DO BANCO DE DADOS
+      POSTGRES_DB: "zabbix_db" # NOME DO BANCO DE DADOS
+    # ZBX_AUTOHANODENAME=fqdn # Allowed values: fqdn, hostname. Available since                                                                                                                                                              6.0.0
+      ZBX_HANODENAME: zbx7-server01 # Available since 6.0.0 ## AQUI VOCE VAI COLOCAR O NOME DO NODE DO HA
+    # ZBX_AUTONODEADDRESS=fqdn # Allowed values: fqdn, hostname. Available since                                                                                                                                                              6.0.0
+    # ZBX_NODEADDRESSPORT: 10051 # Allowed to use with ZBX_AUTONODEADDRESS varia                                                                                                                                                             ble only. Available since 6.0.0
+      ZBX_NODEADDRESS: 192.168.0.235:10051 # Available since 6.0.0 # AQUI VOCE VAI COLOCAR O IP E A PORTA DO NODE DO HA
+    network_mode: host
+    stop_grace_period: 30s
+    labels:
+      com.zabbix.description: "Zabbix server with PostgreSQL database support"
+      com.zabbix.company: "Zabbix LLC"
+      com.zabbix.component: "zabbix-server"
+      com.zabbix.dbtype: "pgsql"
+      com.zabbix.os: "alpine"

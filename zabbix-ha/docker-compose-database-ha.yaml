@@ -1,0 +1,19 @@
+services:
+  timescale-server:
+    container_name: timescaledb
+    restart: always
+    image: timescale/timescaledb-ha:pg16-all
+    environment:
+      POSTGRES_USER: "zabbix"  # USUARIO DO BANCO DE DADOS
+      POSTGRES_PASSWORD: "P@ssword" # SENHA DO BANCO DE DADOS
+      POSTGRES_DB: "zabbix_db" #  NOME DO BANCO DE DADOS
+      TS_TUNE_MAX_CONNS: 5000
+      TS_TUNE_MAX_BG_WORKERS: 32
+    command: postgres -c 'max_connections=5000'
+    volumes:
+      - timescaledb_data:/home/postgres/pgdata/data
+      - ./pg_hba.conf:/etc/postgresql/15/main/pg_hba.conf:ro
+    network_mode: host
+
+volumes:
+  timescaledb_data:
